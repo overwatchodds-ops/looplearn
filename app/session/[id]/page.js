@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import PromptGenerator from "@/components/PromptGenerator";
 
 const STORAGE_KEY = "looplearn_data";
 
@@ -137,6 +138,9 @@ export default function SessionPage({ params }) {
           ))}
         </div>
       </div>
+
+      {/* 🔥 PROMPT GENERATOR (CORE LOOPLEARN FEATURE) */}
+      <PromptGenerator session={session} />
     </div>
   );
 }
