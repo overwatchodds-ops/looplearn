@@ -15,11 +15,19 @@ export default function App() {
   const [promptReady, setPromptReady] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
   const saveTimer = useRef(null);
+  const SRef = useRef(null);
 
   // Load state on mount
   useEffect(() => {
-    setS(loadState());
+    const loaded = loadState();
+    setS(loaded);
+    SRef.current = loaded;
   }, []);
+
+  // Keep SRef in sync
+  useEffect(() => { 
+    if (S) SRef.current = S; 
+  }, [S]);
 
   if (!S) return null;
 
@@ -46,10 +54,6 @@ export default function App() {
   const currentLesson = getLesson(lessonId);
   const baseLesson = getLesson(generatorBaseLessonId);
   const lessons = learnerId ? learnerLessons(learnerId) : [];
-
-  // Autosave — using ref to avoid stale closure without useCallback deps issue
-  const SRef = useRef(S);
-  useEffect(() => { SRef.current = S; }, [S]);
 
   const autosave = (field, value) => {
     const current = SRef.current;
