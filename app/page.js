@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { loadState, saveState, defaultState, uid, fmt, fmtShort, initials, lessonLabel } from '../lib/state';
 import { buildPrompt, cleanPaste } from '../lib/prompt';
 import { SUBJECTS, DIRECTION_DIALS, QUESTION_FORMATS, COMMENT_TYPES, DEFAULT_DIRECTION, DEFAULT_FORMATS, COPY_START, COPY_END } from '../lib/constants';
@@ -47,11 +47,17 @@ export default function App() {
   const baseLesson = getLesson(generatorBaseLessonId);
   const lessons = learnerId ? learnerLessons(learnerId) : [];
 
-  // Autosave
-  const autosave = useCallback((field, value) => {
-    if (!currentLesson) return;
-    const updated = S.lessons.map(l => l.id === lessonId ? { ...l, [field]: value, updated_at: Date.now() } : l);
-    const newS = { ...S, lessons: updated };
+  // Autosave — using ref to avoid stale closure without useCallback deps issue
+  const SRef = useRef(S);
+  useEffect(() => { SRef.current = S; }, [S]);
+
+  const autosave = (field, value) => {
+    const current = SRef.current;
+    if (!current.ui.lessonId) return;
+    const lesson = current.lessons.find(l => l.id === current.ui.lessonId);
+    if (!lesson) return;
+    const updated = current.lessons.map(l => l.id === current.ui.lessonId ? { ...l, [field]: value, updated_at: Date.now() } : l);
+    const newS = { ...current, lessons: updated };
     setS(newS);
     clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
@@ -59,7 +65,7 @@ export default function App() {
       setSaveMsg('Saved');
       setTimeout(() => setSaveMsg(''), 1500);
     }, 400);
-  }, [S, lessonId, currentLesson]);
+  };
 
   // Add learner
   const addLearner = () => {
