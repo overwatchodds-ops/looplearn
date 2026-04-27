@@ -1,11 +1,15 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { loadState, saveState, defaultState, uid, fmt, fmtShort, initials, lessonLabel } from '../lib/state';
+import { loadState, saveState, uid, fmt, fmtShort, initials, lessonLabel } from '../lib/state';
 import { buildPrompt, cleanPaste } from '../lib/prompt';
 import { SUBJECTS, DIRECTION_DIALS, QUESTION_FORMATS, COMMENT_TYPES, DEFAULT_DIRECTION, DEFAULT_FORMATS, COPY_START, COPY_END } from '../lib/constants';
 
 export default function App() {
-  const [S, setS] = useState(null);
+  const [S, setS] = useState(() => {
+    // Initialize lazily — safe for SSR because loadState checks for window
+    if (typeof window === 'undefined') return null;
+    return loadState();
+  });
   const [genState, setGenState] = useState({ direction: { ...DEFAULT_DIRECTION }, formats: [...DEFAULT_FORMATS] });
   const [commentType, setCommentType] = useState('observation');
   const [commentText, setCommentText] = useState('');
@@ -38,10 +42,12 @@ export default function App() {
   };
 
   const go = (screen, opts = {}) => {
-    const newS = { ...S, ui: { ...S.ui, screen, ...opts } };
+    const current = SRef.current || S;
+    const newS = { ...current, ui: { ...current.ui, screen, ...opts } };
     setPromptReady(false);
     setPromptText('');
-    update(newS);
+    setS(newS);
+    saveState(newS);
   };
 
   // Helpers
@@ -75,11 +81,17 @@ export default function App() {
   const addLearner = () => {
     if (!newLearnerName.trim()) return;
     const learner = { id: uid(), name: newLearnerName.trim(), created_at: Date.now() };
-    const newS = { ...S, learners: [...S.learners, learner] };
-    update(newS);
+    const newS = { 
+      ...S, 
+      learners: [...S.learners, learner],
+      ui: { ...S.ui, screen: 'learner', learnerId: learner.id, lessonId: null, generatorMode: null, generatorBaseLessonId: null }
+    };
+    setS(newS);
+    saveState(newS);
     setNewLearnerName('');
     setAddLearnerVisible(false);
-    go('learner', { learnerId: learner.id, generatorMode: null, generatorBaseLessonId: null });
+    setPromptReady(false);
+    setPromptText('');
   };
 
   // New lesson → go to generator
