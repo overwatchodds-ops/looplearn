@@ -10,9 +10,11 @@
  * oldest-first in logic (Lesson 1 = first created).
  */
 
+import { useState } from 'react';
 import { fmt, initials, lessonLabel } from '../lib/state';
 
-export default function LearnerPage({ S, go }) {
+export default function LearnerPage({ S, go, removeLesson }) {
+  const [confirmId, setConfirmId] = useState(null);
   const { learnerId } = S.ui;
   const learner = S.learners.find(l => l.id === learnerId);
 
@@ -59,10 +61,13 @@ export default function LearnerPage({ S, go }) {
           <div
             key={l.id}
             className="lesson-card"
-            onClick={() => go(
-              hasContent ? 'lesson' : 'generator',
-              { lessonId: l.id, learnerId }
-            )}
+            onClick={() => {
+              if (confirmId === l.id) return; // don't navigate while confirming
+              go(
+                hasContent ? 'lesson' : 'generator',
+                { lessonId: l.id, learnerId }
+              );
+            }}
           >
             <div className="flex-between">
               <div>
@@ -83,11 +88,39 @@ export default function LearnerPage({ S, go }) {
                   {fmt(l.created_at)}{subject ? ' · ' + subject : ''}
                 </div>
               </div>
-              <div className="small muted">
-                {hasContent
-                  ? `${commentCount} comment${commentCount !== 1 ? 's' : ''}`
-                  : <span style={{ color: 'var(--amber)' }}>No content yet</span>
-                }
+              <div className="flex-center gap-8">
+                <div className="small muted" style={{ marginRight: 8 }}>
+                  {hasContent
+                    ? `${commentCount} comment${commentCount !== 1 ? 's' : ''}`
+                    : <span style={{ color: 'var(--amber)' }}>No content yet</span>
+                  }
+                </div>
+                {confirmId === l.id ? (
+                  <>
+                    <button
+                      className="btn-sm"
+                      style={{ background: 'var(--rose)', color: '#fff', border: 'none' }}
+                      onClick={(e) => { e.stopPropagation(); removeLesson(l.id); }}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className="btn-sm"
+                      onClick={(e) => { e.stopPropagation(); setConfirmId(null); }}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="btn-sm"
+                    style={{ opacity: 0.4 }}
+                    title="Delete lesson"
+                    onClick={(e) => { e.stopPropagation(); setConfirmId(l.id); }}
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
             </div>
           </div>
