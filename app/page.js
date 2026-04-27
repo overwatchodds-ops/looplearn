@@ -172,7 +172,7 @@ export default function App() {
             {screen === 'lesson' && (
               <button
                 className="btn btn-sm"
-                onClick={() => go('learner', { learnerId: currentLesson?.learner_id })}
+                onClick={() => go('learner', { learnerId: currentLesson?.learner_id, lessonId: null })}
               >
                 ← Exit lesson
               </button>
@@ -181,7 +181,7 @@ export default function App() {
             {screen === 'after' && (
               <button
                 className="btn btn-primary btn-sm"
-                onClick={() => go('learner', { learnerId: currentLesson?.learner_id })}
+                onClick={() => go('learner', { learnerId: currentLesson?.learner_id, lessonId: null })}
               >
                 Complete &amp; exit
               </button>
