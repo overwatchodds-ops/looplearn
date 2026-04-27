@@ -196,7 +196,7 @@ export default function App() {
             <Dashboard S={S} go={go} />
           )}
           {screen === 'learner' && (
-            <LearnerPage S={S} go={go} />
+            <LearnerPage S={S} go={go} removeLesson={app.removeLesson} />
           )}
           {screen === 'generator' && (
             <Generator
