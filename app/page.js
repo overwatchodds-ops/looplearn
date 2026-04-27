@@ -130,6 +130,29 @@ export default function App() {
             )}
           </div>
         </div>
+
+        {/* Sidebar footer links */}
+        <div style={{
+          marginTop: 'auto',
+          padding: '16px 20px',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex',
+          gap: 12,
+          flexWrap: 'wrap',
+        }}>
+          {['About', 'Privacy', 'Terms'].map(label => (
+            <a
+              key={label}
+              href={`/${label.toLowerCase()}`}
+              style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, textDecoration: 'none' }}
+              onMouseOver={e => e.target.style.color = 'rgba(255,255,255,0.65)'}
+              onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.3)'}
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+
       </div>
 
       {/* ────────── Main ────────── */}
@@ -224,25 +247,6 @@ export default function App() {
               updateAfterFmt={app.updateAfterFmt}
             />
           )}
-        </div>
-
-        {/* Sidebar footer links */}
-        <div style={{
-          padding: '16px 24px',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-          display: 'flex',
-          gap: 16,
-        }}>
-          <a href="/about" style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, textDecoration: 'none' }}
-            onMouseOver={e => e.target.style.color='rgba(255,255,255,0.6)'}
-            onMouseOut={e => e.target.style.color='rgba(255,255,255,0.3)'}>
-            About
-          </a>
-          <a href="/privacy" style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, textDecoration: 'none' }}
-            onMouseOver={e => e.target.style.color='rgba(255,255,255,0.6)'}
-            onMouseOut={e => e.target.style.color='rgba(255,255,255,0.3)'}>
-            Privacy
-          </a>
         </div>
 
       </div>
