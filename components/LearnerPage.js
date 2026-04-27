@@ -53,7 +53,6 @@ export default function LearnerPage({ S, go, removeLesson }) {
       {/* Lesson list */}
       {lessons.map((l, i) => {
         const lessonNumber = lessons.length - i; // Lesson 1 = oldest
-        const subject = [l.subject, l.theme].filter(Boolean).join(' — ');
         const hasContent = !!(l.content?.trim());
         const commentCount = (l.comments || []).length;
 
@@ -62,7 +61,7 @@ export default function LearnerPage({ S, go, removeLesson }) {
             key={l.id}
             className="lesson-card"
             onClick={() => {
-              if (confirmId === l.id) return; // don't navigate while confirming
+              if (confirmId === l.id) return;
               go(
                 hasContent ? 'lesson' : 'generator',
                 { lessonId: l.id, learnerId }
@@ -84,17 +83,25 @@ export default function LearnerPage({ S, go, removeLesson }) {
                   </span>
                   <div className="fw-500">{lessonLabel(l)}</div>
                 </div>
-                <div className="small muted">
-                  {fmt(l.created_at)}{subject ? ' · ' + subject : ''}
-                </div>
+                <div className="small muted">{fmt(l.created_at)}</div>
               </div>
               <div className="flex-center gap-8">
-                <div className="small muted" style={{ marginRight: 8 }}>
-                  {hasContent
-                    ? `${commentCount} comment${commentCount !== 1 ? 's' : ''}`
-                    : <span style={{ color: 'var(--amber)' }}>No content yet</span>
-                  }
-                </div>
+                {hasContent && (
+                  <button
+                    className="btn-sm"
+                    style={{ fontSize: 11, opacity: 0.6 }}
+                    title="Go to observations"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      go('after', { lessonId: l.id, learnerId });
+                    }}
+                  >
+                    {commentCount > 0 ? `${commentCount} note${commentCount !== 1 ? 's' : ''}` : 'Observations'}
+                  </button>
+                )}
+                {!hasContent && (
+                  <span className="small" style={{ color: 'var(--amber)', marginRight: 4 }}>No content yet</span>
+                )}
                 {confirmId === l.id ? (
                   <>
                     <button
