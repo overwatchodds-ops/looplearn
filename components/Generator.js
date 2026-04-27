@@ -18,13 +18,16 @@ export default function Generator({ S, go, startLesson, setGeneratorMode, setBas
   const subjectRef = useRef(null);
   const themeRef = useRef(null);
 
+  const [prefillSubject, setPrefillSubject] = useState(baseLesson?.subject || '');
+  const [prefillTheme, setPrefillTheme] = useState(baseLesson?.theme || '');
+
   const handlePickLesson = (id) => {
     const lesson = S.lessons.find(l => l.id === id);
     setBaseLessonId(id);
     setGenDir(lesson?.after_direction ? { ...lesson.after_direction } : { ...DEFAULT_DIRECTION });
     setGenFmts(lesson?.after_formats ? [...lesson.after_formats] : [...DEFAULT_FORMATS]);
-    if (lesson?.subject && subjectRef.current) subjectRef.current.value = lesson.subject;
-    if (lesson?.theme && themeRef.current) themeRef.current.value = lesson.theme;
+    setPrefillSubject(lesson?.subject || '');
+    setPrefillTheme(lesson?.theme || '');
   };
 
   const handleGenerate = () => {
@@ -112,13 +115,13 @@ export default function Generator({ S, go, startLesson, setGeneratorMode, setBas
             <div className="grid-2" style={{ marginBottom: generatorMode === 'fresh' ? 16 : 0 }}>
               <div>
                 <label>Subject</label>
-                <select ref={subjectRef} defaultValue={baseLesson?.subject || ''}>
+                <select ref={subjectRef} key={prefillSubject} defaultValue={prefillSubject}>
                   {SUBJECTS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
                 </select>
               </div>
               <div>
                 <label>Theme / topic</label>
-                <input type="text" ref={themeRef} defaultValue={baseLesson?.theme || ''} placeholder="e.g. Macbeth, Fractions…" />
+                <input type="text" ref={themeRef} key={prefillTheme} defaultValue={prefillTheme} placeholder="e.g. Macbeth, Fractions…" />
               </div>
             </div>
             {generatorMode === 'fresh' && (
