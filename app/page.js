@@ -226,6 +226,25 @@ export default function App() {
           )}
         </div>
 
+        {/* Sidebar footer links */}
+        <div style={{
+          padding: '16px 24px',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex',
+          gap: 16,
+        }}>
+          <a href="/about" style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, textDecoration: 'none' }}
+            onMouseOver={e => e.target.style.color='rgba(255,255,255,0.6)'}
+            onMouseOut={e => e.target.style.color='rgba(255,255,255,0.3)'}>
+            About
+          </a>
+          <a href="/privacy" style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, textDecoration: 'none' }}
+            onMouseOver={e => e.target.style.color='rgba(255,255,255,0.6)'}
+            onMouseOut={e => e.target.style.color='rgba(255,255,255,0.3)'}>
+            Privacy
+          </a>
+        </div>
+
       </div>
     </div>
   );
