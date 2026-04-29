@@ -142,6 +142,7 @@ export default function Lesson({ S, go, autosave, updateLesson }) {
             lineHeight: 1.9,
             resize: 'none',
             width: '100%',
+            fontFamily: 'monospace',
           }}
           placeholder="Lesson will appear here after pasting…"
           onChange={handleContentChange}
