@@ -1,346 +1,198 @@
-/**
- * App — root component
- * 
- * Responsibilities:
- * - Load and provide app state via useAppState
- * - Render the sidebar (learner list + add learner)
- * - Render the topbar (title + contextual actions)
- * - Route to the correct screen component
- * 
- * All business logic lives in useAppState.
- * All screen rendering lives in components/.
- * This file is wiring only.
- */
-
 'use client';
 import { useState } from 'react';
-import { useAppState } from '../lib/useAppState';
-import { initials, lessonLabel } from '../lib/state';
-import Dashboard from '../components/Dashboard';
-import LearnerPage from '../components/LearnerPage';
-import Generator from '../components/Generator';
-import Lesson from '../components/Lesson';
-import AfterLesson from '../components/AfterLesson';
 
-export default function App() {
-  const app = useAppState();
-  const [newLearnerName, setNewLearnerName] = useState('');
-  const [addingLearner, setAddingLearner] = useState(false);
-  const [editingLearnerName, setEditingLearnerName] = useState(false);
-  const [learnerNameVal, setLearnerNameVal] = useState('');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+export default function Landing() {
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const closeSidebar = () => setSidebarOpen(false);
-
-  // Show blank page while localStorage loads (avoids hydration mismatch)
-  if (!app.loaded || !app.S) {
-    return <div style={{ minHeight: '100vh', background: 'var(--paper)' }} />;
-  }
-
-  const { S, go } = app;
-  const { screen, learnerId, lessonId } = S.ui;
-
-  // Derived values used in topbar
-  const currentLearner = S.learners.find(l => l.id === learnerId) || null;
-  const currentLesson = S.lessons.find(l => l.id === lessonId) || null;
-
-  // ── Sidebar handlers ──
-
-  const handleAddLearner = () => {
-    if (!newLearnerName.trim()) return;
-    app.addLearner(newLearnerName.trim());
-    setNewLearnerName('');
-    setAddingLearner(false);
-  };
-
-  const handleRemoveLearner = () => {
-    if (!currentLearner) return;
-    const confirmed = window.confirm(
-      `Remove ${currentLearner.name} and all their lessons? This cannot be undone.`
-    );
-    if (confirmed) app.removeLearner(learnerId);
-  };
-
-  // ── Topbar title per screen ──
-  const titles = {
-    dashboard: 'Dashboard',
-    learner: currentLearner?.name || '',
-    generator: `Lesson Generator — ${currentLearner?.name || ''}`,
-    lesson: currentLearner?.name || 'Lesson',
-    after: 'After lesson',
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubmitting(true);
+    await new Promise(r => setTimeout(r, 600));
+    setSubmitted(true);
+    setSubmitting(false);
   };
 
   return (
-    <div className="app">
+    <div style={{ fontFamily: "'DM Sans', sans-serif", background: '#faf9f6', color: '#1a1a2e', minHeight: '100vh' }}>
 
-      {/* ── Mobile overlay — tap to close sidebar ── */}
-      {sidebarOpen && (
-        <div
-          onClick={closeSidebar}
-          style={{
-            position: 'fixed', inset: 0,
-            background: 'rgba(0,0,0,0.45)',
-            zIndex: 99,
-            display: 'none',
-          }}
-          className="sidebar-overlay"
-        />
-      )}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .hero-title { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 6vw, 68px); line-height: 1.1; color: #1a1a2e; }
+        .section-title { font-family: 'DM Serif Display', serif; font-size: clamp(24px, 4vw, 36px); color: #1a1a2e; }
+        .cta-btn { display: inline-block; background: #1a1a2e; color: white; padding: 16px 36px; border-radius: 10px; font-size: 16px; font-weight: 600; text-decoration: none; transition: opacity 0.15s; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; }
+        .cta-btn:hover { opacity: 0.85; }
+        .cta-btn-outline { display: inline-block; background: transparent; color: #1a1a2e; padding: 14px 32px; border-radius: 10px; font-size: 15px; font-weight: 500; text-decoration: none; border: 1.5px solid rgba(26,26,46,0.25); transition: all 0.15s; }
+        .cta-btn-outline:hover { border-color: #1a1a2e; background: rgba(26,26,46,0.04); }
+        .step-num { font-family: 'DM Serif Display', serif; font-size: 48px; color: #c9a84c; line-height: 1; margin-bottom: 12px; }
+        .tag { display: inline-block; background: rgba(201,168,76,0.15); color: #8a6f20; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 24px; }
+        @media (max-width: 768px) {
+          .nav-links { display: none !important; }
+          .hero-grid { flex-direction: column !important; }
+          .hero-visual { display: none !important; }
+          .steps-grid { grid-template-columns: 1fr 1fr !important; }
+          .audience-grid { grid-template-columns: 1fr !important; }
+          .footer-grid { flex-direction: column !important; gap: 12px !important; text-align: center; }
+          .cta-group { flex-direction: column !important; }
+          .email-form { flex-direction: column !important; }
+        }
+        @media (max-width: 480px) {
+          .steps-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
 
-      {/* ────────── Sidebar ────────── */}
-      <div className={`sidebar${sidebarOpen ? ' sidebar-open' : ''}`}>
-
-        {/* Logo — click to go to dashboard */}
-        <div
-          className="sidebar-logo"
-          style={{ cursor: 'pointer' }}
-          onClick={() => { go('dashboard', { learnerId: null, lessonId: null }); closeSidebar(); }}
-        >
-          <h1>LoopLearn</h1>
-          <span>Learning loop system</span>
+      {/* Nav */}
+      <nav style={{ padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(26,26,46,0.08)', background: '#faf9f6' }}>
+        <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22 }}>LoopLearn</div>
+        <div className="nav-links" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+          <a href="/about" style={{ color: '#7b7b9a', fontSize: 14, textDecoration: 'none' }}>About</a>
+          <a href="/privacy" style={{ color: '#7b7b9a', fontSize: 14, textDecoration: 'none' }}>Privacy</a>
+          <a href="/app" className="cta-btn" style={{ padding: '10px 22px', fontSize: 14 }}>Open app →</a>
         </div>
+        <a href="/app" className="cta-btn" style={{ padding: '10px 22px', fontSize: 14, display: 'none' }} id="nav-mobile-cta">Open app →</a>
+      </nav>
 
-        <div className="sidebar-section">
-          <div className="sidebar-label">Learners</div>
-
-          {/* Learner buttons */}
-          {S.learners.map(l => (
-            <div
-              key={l.id}
-              className={`learner-btn ${learnerId === l.id && screen !== 'dashboard' ? 'active' : ''}`}
-              onClick={() => {
-                go('learner', {
-                  learnerId: l.id,
-                  lessonId: null,
-                  generatorMode: null,
-                  generatorBaseLessonId: null,
-                });
-                closeSidebar();
-              }}
-            >
-              <div className="learner-avatar">{initials(l.name)}</div>
-              <span>{l.name}</span>
+      {/* Hero */}
+      <section style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(52px, 8vw, 100px) 40px clamp(48px, 6vw, 80px)' }}>
+        <div className="hero-grid" style={{ display: 'flex', alignItems: 'center', gap: 64 }}>
+          <div style={{ flex: 1 }}>
+            <div className="tag">Free · No account needed</div>
+            <h1 className="hero-title" style={{ marginBottom: 24 }}>
+              Every lesson,<br />
+              <em>built for that child.</em>
+            </h1>
+            <p style={{ fontSize: 18, color: '#5a5a7a', lineHeight: 1.8, marginBottom: 36, maxWidth: 480 }}>
+              LoopLearn helps parents, teachers, and therapists create personalised AI lessons that adapt to each learner — session by session, response by response. Built by a parent who knows that one-size lessons don't fit every child.
+            </p>
+            <div className="cta-group" style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+              <a href="/app" className="cta-btn">Start teaching →</a>
+              <a href="#how" className="cta-btn-outline">See how it works</a>
             </div>
-          ))}
+            <p style={{ fontSize: 13, color: '#9b9bb5' }}>
+              🔒 All data stays on your device. Nothing stored on our servers.
+            </p>
+          </div>
 
-          {/* Add learner */}
-          <div className="add-learner-wrap">
-            {!addingLearner ? (
-              <button
-                className="add-learner-btn"
-                onClick={() => setAddingLearner(true)}
-              >
-                + Add learner
-              </button>
-            ) : (
-              <div className="add-learner-input-wrap">
-                <input
-                  autoFocus
-                  type="text"
-                  value={newLearnerName}
-                  placeholder="Name, then press Enter…"
-                  onChange={e => setNewLearnerName(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') handleAddLearner();
-                    if (e.key === 'Escape') {
-                      setAddingLearner(false);
-                      setNewLearnerName('');
-                    }
-                  }}
-                />
+          {/* Hero visual */}
+          <div className="hero-visual" style={{ flex: '0 0 300px' }}>
+            <div style={{ background: '#1a1a2e', borderRadius: 16, padding: 28, boxShadow: '0 24px 60px rgba(26,26,46,0.2)' }}>
+              <div style={{ fontFamily: "'DM Serif Display', serif", color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 20 }}>Today's lesson — Mia</div>
+              {[['Subject', 'Mathematics'], ['Topic', 'Fractions'], ['Direction', '↑ More challenge']].map(([label, value]) => (
+                <div key={label} style={{ marginBottom: 10 }}>
+                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>{label}</div>
+                  <div style={{ background: 'rgba(255,255,255,0.07)', borderRadius: 8, padding: '10px 14px', color: 'white', fontSize: 14 }}>{value}</div>
+                </div>
+              ))}
+              <div style={{ marginTop: 20, background: '#c9a84c', borderRadius: 8, padding: '12px 16px', color: '#1a1a2e', fontWeight: 600, fontSize: 14, textAlign: 'center' }}>
+                Generate lesson prompt →
               </div>
-            )}
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Sidebar footer */}
-        <div style={{
-          marginTop: 'auto',
-          padding: '16px 20px',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-        }}>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginBottom: 10, lineHeight: 1.5 }}>
-            🔒 All data stays on your device. Nothing is sent to any server.
+      {/* How it works */}
+      <section id="how" style={{ background: 'white', padding: 'clamp(48px, 7vw, 90px) 40px' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <h2 className="section-title" style={{ marginBottom: 12 }}>How it works</h2>
+            <p style={{ color: '#7b7b9a', fontSize: 16 }}>Four steps. No account. No setup.</p>
           </div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            {['About', 'Privacy', 'Terms'].map(label => (
-              <a
-                key={label}
-                href={`/${label.toLowerCase()}`}
-                style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, textDecoration: 'none' }}
-                onMouseOver={e => e.target.style.color = 'rgba(255,255,255,0.65)'}
-                onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.3)'}
-              >
-                {label}
-              </a>
+          <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
+            {[
+              ['1', 'Generate', 'Fill in the subject, topic, and a few notes about your learner. LoopLearn builds a smart prompt.'],
+              ['2', 'Teach', 'Paste the prompt into ChatGPT, Gemini, or Claude. Copy the lesson back into LoopLearn.'],
+              ['3', 'Observe', 'Your learner types their answers. You add observations and set the direction for next time.'],
+              ['4', 'Repeat', 'Generate the next lesson. The AI uses everything it knows to make it better every time.'],
+            ].map(([n, title, desc]) => (
+              <div key={n}>
+                <div className="step-num">{n}</div>
+                <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 8 }}>{title}</div>
+                <div style={{ color: '#7b7b9a', fontSize: 14, lineHeight: 1.7 }}>{desc}</div>
+              </div>
             ))}
           </div>
         </div>
+      </section>
 
-      </div>
-
-      {/* ────────── Main ────────── */}
-      <div className="main">
-
-        {/* Topbar */}
-        <div className="topbar">
-          {/* Hamburger — mobile only */}
-          <button
-            className="hamburger"
-            onClick={() => setSidebarOpen(o => !o)}
-            aria-label="Open menu"
-          >
-            ☰
-          </button>
-          <div className="topbar-title">
-            {screen === 'learner' && currentLearner ? (
-              editingLearnerName ? (
-                <input
-                  autoFocus
-                  type="text"
-                  value={learnerNameVal}
-                  onChange={e => setLearnerNameVal(e.target.value)}
-                  onBlur={() => {
-                    if (learnerNameVal.trim() && learnerNameVal.trim() !== currentLearner.name) {
-                      app.renameLearner(learnerId, learnerNameVal.trim());
-                    }
-                    setEditingLearnerName(false);
-                  }}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                      if (learnerNameVal.trim() && learnerNameVal.trim() !== currentLearner.name) {
-                        app.renameLearner(learnerId, learnerNameVal.trim());
-                      }
-                      setEditingLearnerName(false);
-                    }
-                    if (e.key === 'Escape') setEditingLearnerName(false);
-                  }}
-                  style={{
-                    fontSize: 20,
-                    fontFamily: "'DM Serif Display', serif",
-                    border: 'none',
-                    borderBottom: '2px solid var(--gold)',
-                    background: 'transparent',
-                    outline: 'none',
-                    color: 'var(--ink)',
-                    width: 200,
-                  }}
-                />
-              ) : (
-                <span
-                  style={{ cursor: 'pointer' }}
-                  title="Click to rename"
-                  onClick={() => { setLearnerNameVal(currentLearner.name); setEditingLearnerName(true); }}
-                >
-                  {currentLearner.name} <span style={{ fontSize: 13, color: 'var(--ink-light)' }}>✎</span>
-                </span>
-              )
-            ) : (
-              titles[screen] || ''
-            )}
+      {/* Who it's for */}
+      <section style={{ padding: 'clamp(48px, 7vw, 90px) 40px', background: '#faf9f6' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <h2 className="section-title" style={{ marginBottom: 12 }}>Built for one-on-one learning</h2>
+            <p style={{ color: '#7b7b9a', fontSize: 16 }}>Whether you're a parent, tutor, or specialist — LoopLearn works for you.</p>
           </div>
-          <div className="topbar-actions">
-
-            {screen === 'learner' && (
-              <>
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={() => go('generator', {
-                    learnerId,
-                    lessonId: null,
-                    generatorMode: null,
-                    generatorBaseLessonId: null,
-                  })}
-                >
-                  + New lesson
-                </button>
-                <button
-                  className="btn btn-sm"
-                  style={{ color: 'var(--rose)', borderColor: 'var(--rose)' }}
-                  onClick={handleRemoveLearner}
-                >
-                  Remove
-                </button>
-              </>
-            )}
-
-            {screen === 'generator' && (
-              <button className="btn btn-sm" onClick={() => go('learner', { learnerId })}>
-                ← Back
-              </button>
-            )}
-
-            {screen === 'lesson' && (
-              <button
-                className="btn btn-sm"
-                onClick={() => go('learner', { learnerId: currentLesson?.learner_id, lessonId: null })}
-              >
-                ← Exit lesson
-              </button>
-            )}
-
-            {screen === 'after' && (
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={() => go('generator', {
-                    learnerId: currentLesson?.learner_id,
-                    lessonId: null,
-                    generatorMode: 'continue',
-                    generatorBaseLessonId: lessonId,
-                  })}
-                >
-                  Generate next lesson →
-                </button>
-                <button
-                  className="btn btn-sm"
-                  onClick={() => go('learner', { learnerId: currentLesson?.learner_id, lessonId: null })}
-                >
-                  Complete &amp; exit
-                </button>
+          <div className="audience-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
+            {[
+              ['👨‍👩‍👧', 'Parents', 'Teach your child at home with lessons that adapt to exactly where they are — no teaching degree required.'],
+              ['📚', 'Tutors & teachers', 'Create personalised sessions in minutes. Let the AI handle the structure while you focus on your learner.'],
+              ['🩺', 'Therapists & specialists', 'Perfect for speech therapists, learning support specialists, and anyone working one-on-one with a child.'],
+              ['🌟', 'Neurodiverse learners', 'Built by a parent of two boys on the autism spectrum. LoopLearn is designed to adapt to each child\'s pace, style, and strengths — not the other way around.'],
+            ].map(([emoji, title, desc]) => (
+              <div key={title} style={{ background: 'white', borderRadius: 14, padding: 28, border: '1px solid rgba(26,26,46,0.08)' }}>
+                <div style={{ fontSize: 32, marginBottom: 14 }}>{emoji}</div>
+                <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 8 }}>{title}</div>
+                <div style={{ color: '#7b7b9a', fontSize: 14, lineHeight: 1.7 }}>{desc}</div>
               </div>
-            )}
-
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* Screen content */}
-        <div className="content fade-in">
-          {screen === 'dashboard' && (
-            <Dashboard S={S} go={go} />
-          )}
-          {screen === 'learner' && (
-            <LearnerPage S={S} go={go} removeLesson={app.removeLesson} />
-          )}
-          {screen === 'generator' && (
-            <Generator
-              S={S}
-              go={go}
-              startLesson={app.startLesson}
-              setGeneratorMode={app.setGeneratorMode}
-              setBaseLessonId={app.setBaseLessonId}
-            />
-          )}
-          {screen === 'lesson' && (
-            <Lesson
-              S={S}
-              go={go}
-              autosave={app.autosave}
-              updateLesson={app.updateLesson}
-            />
-          )}
-          {screen === 'after' && (
-            <AfterLesson
-              S={S}
-              addComment={app.addComment}
-              deleteComment={app.deleteComment}
-              updateAfterDial={app.updateAfterDial}
-              updateAfterFmt={app.updateAfterFmt}
-            />
-          )}
+      {/* CTA + Email */}
+      <section style={{ background: '#1a1a2e', padding: 'clamp(48px, 7vw, 90px) 40px' }}>
+        <div style={{ maxWidth: 580, margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(28px, 4vw, 42px)', color: 'white', marginBottom: 16, lineHeight: 1.2 }}>
+            Ready to try it?
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, marginBottom: 36, lineHeight: 1.7 }}>
+            Free to use, nothing to install. Open it now and create your first lesson in minutes.
+          </p>
+          <a href="/app" className="cta-btn" style={{ background: '#c9a84c', color: '#1a1a2e', marginBottom: 40, display: 'inline-block' }}>
+            Open LoopLearn free →
+          </a>
+
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 32 }}>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, marginBottom: 14 }}>Stay in the loop — get notified about updates</p>
+            {submitted ? (
+              <p style={{ color: '#c9a84c', fontWeight: 500 }}>✓ Thanks! We'll be in touch.</p>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <div className="email-form" style={{ display: 'flex', gap: 8, maxWidth: 400, margin: '0 auto' }}>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                    style={{ flex: 1, padding: '12px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.07)', color: 'white', fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none', minWidth: 0 }}
+                  />
+                  <button type="submit" disabled={submitting} className="cta-btn" style={{ padding: '12px 20px', fontSize: 14, whiteSpace: 'nowrap' }}>
+                    {submitting ? '…' : 'Notify me'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
+      </section>
 
-      </div>
+      {/* Footer */}
+      <footer style={{ padding: '28px 40px', borderTop: '1px solid rgba(26,26,46,0.08)', background: '#faf9f6' }}>
+        <div className="footer-grid" style={{ maxWidth: 1000, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 16 }}>LoopLearn</div>
+          <div style={{ fontSize: 13, color: '#9b9bb5' }}>© 2026 ClickSeed Pty Ltd · ABN 87 656 256 567</div>
+          <div style={{ display: 'flex', gap: 20 }}>
+            {['About', 'Privacy', 'Terms'].map(l => (
+              <a key={l} href={`/${l.toLowerCase()}`} style={{ color: '#9b9bb5', fontSize: 13, textDecoration: 'none' }}>{l}</a>
+            ))}
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 }
