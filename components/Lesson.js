@@ -149,9 +149,16 @@ export default function Lesson({ S, go, autosave, updateLesson }) {
         />
       </div>
 
-      {/* Finish button — only shown when there is content */}
+      {/* Finish button — sticky at bottom, only shown when there is content */}
       {hasContent && (
-        <div style={{ textAlign: 'center', marginTop: 24 }}>
+        <div style={{
+          position: 'sticky',
+          bottom: 0,
+          background: 'linear-gradient(to top, var(--paper) 70%, transparent)',
+          padding: '24px 0 16px',
+          textAlign: 'center',
+          marginTop: 8,
+        }}>
           <button
             className="btn btn-primary btn-lg"
             onClick={() => go('after', { lessonId })}
