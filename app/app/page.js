@@ -14,13 +14,13 @@
 
 'use client';
 import { useState } from 'react';
-import { useAppState } from '../lib/useAppState';
-import { initials, lessonLabel } from '../lib/state';
-import Dashboard from '../components/Dashboard';
-import LearnerPage from '../components/LearnerPage';
-import Generator from '../components/Generator';
-import Lesson from '../components/Lesson';
-import AfterLesson from '../components/AfterLesson';
+import { useAppState } from '../../lib/useAppState';
+import { initials, lessonLabel } from '../../lib/state';
+import Dashboard from '../../components/Dashboard';
+import LearnerPage from '../../components/LearnerPage';
+import Generator from '../../components/Generator';
+import Lesson from '../../components/Lesson';
+import AfterLesson from '../../components/AfterLesson';
 
 export default function App() {
   const app = useAppState();
