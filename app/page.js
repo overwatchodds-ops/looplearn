@@ -61,8 +61,8 @@ export default function App() {
     dashboard: 'Dashboard',
     learner: currentLearner?.name || '',
     generator: `Lesson Generator — ${currentLearner?.name || ''}`,
-    lesson: currentLesson ? lessonLabel(currentLesson) : 'Lesson',
-    after: `After lesson — ${currentLesson ? lessonLabel(currentLesson) : ''}`,
+    lesson: currentLearner?.name || 'Lesson',
+    after: 'After lesson',
   };
 
   return (
@@ -202,12 +202,25 @@ export default function App() {
             )}
 
             {screen === 'after' && (
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={() => go('learner', { learnerId: currentLesson?.learner_id, lessonId: null })}
-              >
-                Complete &amp; exit
-              </button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => go('generator', {
+                    learnerId: currentLesson?.learner_id,
+                    lessonId: null,
+                    generatorMode: 'continue',
+                    generatorBaseLessonId: lessonId,
+                  })}
+                >
+                  Generate next lesson →
+                </button>
+                <button
+                  className="btn btn-sm"
+                  onClick={() => go('learner', { learnerId: currentLesson?.learner_id, lessonId: null })}
+                >
+                  Complete &amp; exit
+                </button>
+              </div>
             )}
 
           </div>
@@ -219,7 +232,7 @@ export default function App() {
             <Dashboard S={S} go={go} />
           )}
           {screen === 'learner' && (
-            <LearnerPage S={S} go={go} removeLesson={app.removeLesson} />
+            <LearnerPage S={S} go={go} removeLesson={app.removeLesson} renameLearner={app.renameLearner} />
           )}
           {screen === 'generator' && (
             <Generator
