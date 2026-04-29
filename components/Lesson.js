@@ -12,8 +12,12 @@
  */
 
 import { useState } from 'react';
+import { marked } from 'marked';
 import { cleanPaste } from '../lib/prompt';
 import { SUBJECTS, COPY_START, COPY_END } from '../lib/constants';
+
+// Configure marked — clean output, no mangling
+marked.setOptions({ breaks: true, gfm: true });
 
 export default function Lesson({ S, go, autosave, updateLesson }) {
   const { lessonId } = S.ui;
@@ -130,22 +134,47 @@ export default function Lesson({ S, go, autosave, updateLesson }) {
         </div>
       )}
 
-      {/* Lesson textarea */}
+      {/* Lesson content — rendered markdown */}
       <div className="card" style={{ marginBottom: 16 }}>
-        <textarea
-          id="lesson-textarea"
-          key={lessonId}
-          defaultValue={lesson.content || ''}
-          style={{
-            minHeight: 600,
-            fontSize: 14,
-            lineHeight: 1.9,
-            resize: 'none',
-            width: '100%',
-          }}
-          placeholder="Lesson will appear here after pasting…"
-          onChange={handleContentChange}
-        />
+        {hasContent ? (
+          <>
+            <div
+              className="lesson-rendered"
+              dangerouslySetInnerHTML={{ __html: marked(lesson.content || '') }}
+            />
+            <div style={{
+              borderTop: '1px solid var(--border)',
+              marginTop: 24,
+              paddingTop: 16,
+            }}>
+              <div className="small muted" style={{ marginBottom: 8 }}>
+                {learnerName}'s responses
+              </div>
+              <textarea
+                id="lesson-textarea"
+                key={lessonId + '-responses'}
+                defaultValue={lesson.responses || ''}
+                style={{ minHeight: 200, fontSize: 14, lineHeight: 1.9, resize: 'vertical', width: '100%' }}
+                placeholder={`${learnerName} types answers here…`}
+                onChange={e => {
+                  autosave(lessonId, 'responses', e.target.value);
+                  setSaveStatus('saving');
+                  setTimeout(() => setSaveStatus('saved'), 600);
+                  setTimeout(() => setSaveStatus(''), 2500);
+                }}
+              />
+            </div>
+          </>
+        ) : (
+          <textarea
+            id="lesson-textarea"
+            key={lessonId}
+            defaultValue={lesson.content || ''}
+            style={{ minHeight: 600, fontSize: 14, lineHeight: 1.9, resize: 'none', width: '100%' }}
+            placeholder="Lesson will appear here after pasting…"
+            onChange={handleContentChange}
+          />
+        )}
       </div>
 
       {/* Finish button — only shown when there is content */}
