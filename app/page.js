@@ -26,6 +26,8 @@ export default function App() {
   const app = useAppState();
   const [newLearnerName, setNewLearnerName] = useState('');
   const [addingLearner, setAddingLearner] = useState(false);
+  const [editingLearnerName, setEditingLearnerName] = useState(false);
+  const [learnerNameVal, setLearnerNameVal] = useState('');
 
   // Show blank page while localStorage loads (avoids hydration mismatch)
   if (!app.loaded || !app.S) {
@@ -160,7 +162,53 @@ export default function App() {
 
         {/* Topbar */}
         <div className="topbar">
-          <div className="topbar-title">{titles[screen] || ''}</div>
+          <div className="topbar-title">
+            {screen === 'learner' && currentLearner ? (
+              editingLearnerName ? (
+                <input
+                  autoFocus
+                  type="text"
+                  value={learnerNameVal}
+                  onChange={e => setLearnerNameVal(e.target.value)}
+                  onBlur={() => {
+                    if (learnerNameVal.trim() && learnerNameVal.trim() !== currentLearner.name) {
+                      app.renameLearner(learnerId, learnerNameVal.trim());
+                    }
+                    setEditingLearnerName(false);
+                  }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      if (learnerNameVal.trim() && learnerNameVal.trim() !== currentLearner.name) {
+                        app.renameLearner(learnerId, learnerNameVal.trim());
+                      }
+                      setEditingLearnerName(false);
+                    }
+                    if (e.key === 'Escape') setEditingLearnerName(false);
+                  }}
+                  style={{
+                    fontSize: 20,
+                    fontFamily: "'DM Serif Display', serif",
+                    border: 'none',
+                    borderBottom: '2px solid var(--gold)',
+                    background: 'transparent',
+                    outline: 'none',
+                    color: 'var(--ink)',
+                    width: 200,
+                  }}
+                />
+              ) : (
+                <span
+                  style={{ cursor: 'pointer' }}
+                  title="Click to rename"
+                  onClick={() => { setLearnerNameVal(currentLearner.name); setEditingLearnerName(true); }}
+                >
+                  {currentLearner.name} <span style={{ fontSize: 13, color: 'var(--ink-light)' }}>✎</span>
+                </span>
+              )
+            ) : (
+              titles[screen] || ''
+            )}
+          </div>
           <div className="topbar-actions">
 
             {screen === 'learner' && (
@@ -232,7 +280,7 @@ export default function App() {
             <Dashboard S={S} go={go} />
           )}
           {screen === 'learner' && (
-            <LearnerPage S={S} go={go} removeLesson={app.removeLesson} renameLearner={app.renameLearner} />
+            <LearnerPage S={S} go={go} removeLesson={app.removeLesson} />
           )}
           {screen === 'generator' && (
             <Generator
