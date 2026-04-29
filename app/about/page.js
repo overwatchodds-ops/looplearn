@@ -136,16 +136,26 @@ export default function About() {
             Who built it
           </h2>
           <p style={{ lineHeight: 1.8, marginBottom: 16 }}>
-            LoopLearn was built by <strong>Chris Wong</strong>, a CPA and technology builder
-            based in Sydney, Australia. Chris builds practical tools that solve real problems —
-            LoopLearn grew out of a simple question: what if every child could have a lesson
-            that adapts to exactly where they are right now?
+            LoopLearn was built by <strong>Chris Wong</strong>, a CPA, technology builder, and
+            father of two boys on the autism spectrum, based in Sydney, Australia.
+          </p>
+          <p style={{ lineHeight: 1.8, marginBottom: 16 }}>
+            For years, Chris has been a hands-on advocate for neurodiverse learners — working
+            closely with ASPECT and their educational programs, and supporting families navigating
+            the system. One of his proudest moments: designing and running his own work experience
+            program for a school leaver on the spectrum, who went on to land their first job.
+          </p>
+          <p style={{ lineHeight: 1.8, marginBottom: 16 }}>
+            LoopLearn grew out of that lived experience — the frustration of watching one-size-fits-all
+            lessons fail kids who just needed something built <em>for them</em>. The question that
+            drove it: what if every child could have a lesson that adapts to exactly where they
+            are right now?
           </p>
           <p style={{ lineHeight: 1.8, marginBottom: 24 }}>
             LoopLearn is a product of{' '}
             <strong>ClickSeed Pty Ltd</strong> (ABN 87 656 256 567).
           </p>
-          <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a
               href="https://www.linkedin.com/in/chriswongcpa"
               target="_blank"
@@ -164,6 +174,25 @@ export default function About() {
               }}
             >
               Connect on LinkedIn ↗
+            </a>
+            <a
+              href="https://www.facebook.com/AutismActive/"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '10px 20px',
+                background: '#1877F2',
+                color: 'white',
+                borderRadius: 8,
+                textDecoration: 'none',
+                fontSize: 14,
+                fontWeight: 500,
+              }}
+            >
+              Autism Active ↗
             </a>
             <a
               href="mailto:chris@clickseed.com.au"
