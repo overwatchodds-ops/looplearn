@@ -159,3 +159,18 @@ textarea { resize: vertical; }
   .sidebar { width: 100%; position: relative; height: auto; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
 }
+
+/* Rendered lesson markdown */
+.lesson-rendered { font-size: 15px; line-height: 1.8; color: var(--ink); }
+.lesson-rendered h1, .lesson-rendered h2 { font-family: 'DM Serif Display', serif; margin: 24px 0 12px; color: var(--ink); }
+.lesson-rendered h1 { font-size: 24px; }
+.lesson-rendered h2 { font-size: 20px; }
+.lesson-rendered h3 { font-size: 16px; font-weight: 600; margin: 20px 0 8px; color: var(--ink); }
+.lesson-rendered p { margin-bottom: 12px; }
+.lesson-rendered ul, .lesson-rendered ol { padding-left: 24px; margin-bottom: 12px; }
+.lesson-rendered li { margin-bottom: 6px; }
+.lesson-rendered strong { font-weight: 600; color: var(--ink); }
+.lesson-rendered em { font-style: italic; color: var(--ink-mid); }
+.lesson-rendered hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+.lesson-rendered code { background: var(--cream); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+.lesson-rendered blockquote { border-left: 3px solid var(--gold); padding-left: 16px; color: var(--ink-mid); margin: 16px 0; }
