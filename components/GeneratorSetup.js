@@ -176,12 +176,12 @@ export default function GeneratorSetup({
               <div>
                 <label>
                   Learner context{' '}
-                  <span className="muted">(optional — age, level, anything useful)</span>
+                  <span className="muted">(optional — the more you add, the better the lesson)</span>
                 </label>
                 <textarea
                   value={context}
-                  style={{ minHeight: 80 }}
-                  placeholder={`e.g. ${learner?.name} is 14, Year 9. Gets frustrated if things feel too hard…`}
+                  style={{ minHeight: 100 }}
+                  placeholder={`e.g. ${learner?.name} is 9 years old. Loves Minecraft and football. Gets frustrated quickly if things feel too hard. Responds well to humour and challenges. Struggles with long passages of text. Target: build confidence with fractions.`}
                   onChange={e => setContext(e.target.value)}
                 />
               </div>
