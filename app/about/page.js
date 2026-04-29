@@ -36,6 +36,7 @@ export default function About() {
         <div style={{ display: 'flex', gap: 24 }}>
           <a href="/about" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, textDecoration: 'none' }}>About</a>
           <a href="/privacy" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, textDecoration: 'none' }}>Privacy</a>
+          <a href="/terms" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, textDecoration: 'none' }}>Terms</a>
         </div>
       </div>
 
@@ -65,10 +66,30 @@ export default function About() {
             structured lessons tailored to each learner — then uses the learner&apos;s responses
             to continuously improve every subsequent lesson.
           </p>
-          <p style={{ lineHeight: 1.8 }}>
+          <p style={{ lineHeight: 1.8, marginBottom: 16 }}>
             The idea is simple: the more lessons a learner completes, the better the AI
             understands them — their strengths, gaps, pace, and engagement style. Every
             lesson builds on the last.
+          </p>
+          <p style={{ lineHeight: 1.8, color: 'var(--ink-mid)' }}>
+            Particularly useful for tutors, learning support teachers, and therapists working one-on-one with a learner.
+          </p>
+        </section>
+
+        {/* Free forever — moved up for trust */}
+        <section style={{
+          background: 'var(--cream)',
+          borderRadius: 12,
+          padding: '32px 36px',
+          marginBottom: 48,
+        }}>
+          <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 24, marginBottom: 12 }}>
+            Free, always
+          </h2>
+          <p style={{ lineHeight: 1.8, color: 'var(--ink-mid)' }}>
+            LoopLearn is free to use. Your data stays on your device — we don&apos;t store,
+            collect, or share anything. No account required. No ads. No tracking.
+            Just open it and start teaching.
           </p>
         </section>
 
@@ -163,23 +184,6 @@ export default function About() {
               Get in touch
             </a>
           </div>
-        </section>
-
-        {/* Free forever */}
-        <section style={{
-          background: 'var(--cream)',
-          borderRadius: 12,
-          padding: '32px 36px',
-          marginBottom: 48,
-        }}>
-          <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 24, marginBottom: 12 }}>
-            Free, always
-          </h2>
-          <p style={{ lineHeight: 1.8, color: 'var(--ink-mid)' }}>
-            LoopLearn is free to use. Your data stays on your device — we don&apos;t store,
-            collect, or share anything. No account required. No ads. No tracking.
-            Just open it and start teaching.
-          </p>
         </section>
 
         {/* Back link */}
