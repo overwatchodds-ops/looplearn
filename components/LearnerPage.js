@@ -13,10 +13,24 @@
 import { useState } from 'react';
 import { fmt, initials, lessonLabel } from '../lib/state';
 
-export default function LearnerPage({ S, go, removeLesson }) {
+export default function LearnerPage({ S, go, removeLesson, renameLearner }) {
   const [confirmId, setConfirmId] = useState(null);
+  const [editingName, setEditingName] = useState(false);
+  const [nameVal, setNameVal] = useState('');
   const { learnerId } = S.ui;
   const learner = S.learners.find(l => l.id === learnerId);
+
+  const startEdit = () => {
+    setNameVal(learner.name);
+    setEditingName(true);
+  };
+
+  const commitName = () => {
+    if (nameVal.trim() && nameVal.trim() !== learner.name) {
+      renameLearner(learnerId, nameVal.trim());
+    }
+    setEditingName(false);
+  };
 
   // Sorted newest first for display
   const lessons = S.lessons
@@ -36,7 +50,38 @@ export default function LearnerPage({ S, go, removeLesson }) {
         >
           {initials(learner.name)}
         </div>
-        <h2 className="serif" style={{ fontSize: 24 }}>{learner.name}</h2>
+        {editingName ? (
+          <input
+            autoFocus
+            type="text"
+            value={nameVal}
+            onChange={e => setNameVal(e.target.value)}
+            onBlur={commitName}
+            onKeyDown={e => {
+              if (e.key === 'Enter') commitName();
+              if (e.key === 'Escape') setEditingName(false);
+            }}
+            style={{
+              fontSize: 24,
+              fontFamily: "'DM Serif Display', serif",
+              border: 'none',
+              borderBottom: '2px solid var(--gold)',
+              background: 'transparent',
+              outline: 'none',
+              color: 'var(--ink)',
+              width: 220,
+            }}
+          />
+        ) : (
+          <h2
+            className="serif"
+            style={{ fontSize: 24, cursor: 'pointer' }}
+            title="Click to rename"
+            onClick={startEdit}
+          >
+            {learner.name} <span style={{ fontSize: 13, color: 'var(--ink-light)', fontFamily: 'DM Sans' }}>✎</span>
+          </h2>
+        )}
       </div>
 
       {/* Empty state */}
