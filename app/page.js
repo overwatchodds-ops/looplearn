@@ -28,6 +28,9 @@ export default function App() {
   const [addingLearner, setAddingLearner] = useState(false);
   const [editingLearnerName, setEditingLearnerName] = useState(false);
   const [learnerNameVal, setLearnerNameVal] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const closeSidebar = () => setSidebarOpen(false);
 
   // Show blank page while localStorage loads (avoids hydration mismatch)
   if (!app.loaded || !app.S) {
@@ -70,14 +73,28 @@ export default function App() {
   return (
     <div className="app">
 
+      {/* ── Mobile overlay — tap to close sidebar ── */}
+      {sidebarOpen && (
+        <div
+          onClick={closeSidebar}
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.45)',
+            zIndex: 99,
+            display: 'none',
+          }}
+          className="sidebar-overlay"
+        />
+      )}
+
       {/* ────────── Sidebar ────────── */}
-      <div className="sidebar">
+      <div className={`sidebar${sidebarOpen ? ' sidebar-open' : ''}`}>
 
         {/* Logo — click to go to dashboard */}
         <div
           className="sidebar-logo"
           style={{ cursor: 'pointer' }}
-          onClick={() => go('dashboard', { learnerId: null, lessonId: null })}
+          onClick={() => { go('dashboard', { learnerId: null, lessonId: null }); closeSidebar(); }}
         >
           <h1>LoopLearn</h1>
           <span>Learning loop system</span>
@@ -91,12 +108,15 @@ export default function App() {
             <div
               key={l.id}
               className={`learner-btn ${learnerId === l.id && screen !== 'dashboard' ? 'active' : ''}`}
-              onClick={() => go('learner', {
-                learnerId: l.id,
-                lessonId: null,
-                generatorMode: null,
-                generatorBaseLessonId: null,
-              })}
+              onClick={() => {
+                go('learner', {
+                  learnerId: l.id,
+                  lessonId: null,
+                  generatorMode: null,
+                  generatorBaseLessonId: null,
+                });
+                closeSidebar();
+              }}
             >
               <div className="learner-avatar">{initials(l.name)}</div>
               <span>{l.name}</span>
@@ -164,6 +184,14 @@ export default function App() {
 
         {/* Topbar */}
         <div className="topbar">
+          {/* Hamburger — mobile only */}
+          <button
+            className="hamburger"
+            onClick={() => setSidebarOpen(o => !o)}
+            aria-label="Open menu"
+          >
+            ☰
+          </button>
           <div className="topbar-title">
             {screen === 'learner' && currentLearner ? (
               editingLearnerName ? (
