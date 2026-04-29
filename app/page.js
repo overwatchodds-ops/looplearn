@@ -133,26 +133,28 @@ export default function App() {
           </div>
         </div>
 
-        {/* Sidebar footer links */}
+        {/* Sidebar footer */}
         <div style={{
           marginTop: 'auto',
           padding: '16px 20px',
           borderTop: '1px solid rgba(255,255,255,0.06)',
-          display: 'flex',
-          gap: 12,
-          flexWrap: 'wrap',
         }}>
-          {['About', 'Privacy', 'Terms'].map(label => (
-            <a
-              key={label}
-              href={`/${label.toLowerCase()}`}
-              style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, textDecoration: 'none' }}
-              onMouseOver={e => e.target.style.color = 'rgba(255,255,255,0.65)'}
-              onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.3)'}
-            >
-              {label}
-            </a>
-          ))}
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginBottom: 10, lineHeight: 1.5 }}>
+            🔒 All data stays on your device. Nothing is sent to any server.
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            {['About', 'Privacy', 'Terms'].map(label => (
+              <a
+                key={label}
+                href={`/${label.toLowerCase()}`}
+                style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, textDecoration: 'none' }}
+                onMouseOver={e => e.target.style.color = 'rgba(255,255,255,0.65)'}
+                onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.3)'}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
         </div>
 
       </div>
