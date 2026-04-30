@@ -1,6 +1,31 @@
 'use client';
 import { useState } from 'react';
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'LoopLearn',
+  url: 'https://looplearn-jet.vercel.app',
+  description:
+    'LoopLearn helps parents, tutors and therapists build personalised AI-powered lessons for neurodiverse children, including autistic learners and kids with ADHD.',
+  applicationCategory: 'EducationApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'ClickSeed Pty Ltd',
+    url: 'https://looplearn-jet.vercel.app',
+  },
+  audience: {
+    '@type': 'Audience',
+    audienceType: 'Parents, tutors, therapists supporting neurodiverse learners',
+  },
+};
+
 export default function Landing() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -17,6 +42,11 @@ export default function Landing() {
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", background: '#faf9f6', color: '#1a1a2e', minHeight: '100vh' }}>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
